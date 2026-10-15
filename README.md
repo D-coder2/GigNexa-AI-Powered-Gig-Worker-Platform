@@ -1,4 +1,4 @@
-# 🚀 GigAI - Next-Gen AI Platform for Gig Workers
+# 🚀 GigNexa — AI-Powered Gig Worker Platform
 
 GigAI is an AI-powered platform designed to empower gig economy workers with smart job matching, fair rate estimation, and multilingual assistance.
 
