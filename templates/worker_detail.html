@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ worker.name }} — GigNexa{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('index') }}">Professionals</a><span>/</span><span>{{ worker.name }}</span></div>
+<section class="profile-layout">
+  <article class="profile-main">
+    <div class="profile-header"><div class="avatar avatar-large">{{ worker.name[:1]|upper }}</div><div><span class="eyebrow">{{ worker.category }}</span><h1>{{ worker.name }}</h1><p class="muted">⌖ {{ worker.area }}</p></div></div>
+    <div class="profile-block"><h2>About this professional</h2><p>{{ worker.bio or 'This professional is ready to discuss your service requirements.' }}</p></div>
+    <div class="profile-block"><h2>Customer reviews {% if average %}<span class="rating">★ {{ average }}/5</span>{% endif %}</h2>
+      {% if reviews %}{% for review in reviews %}<div class="review-item"><div class="review-stars">{{ '★' * review.rating }}{{ '☆' * (5-review.rating) }}</div><p>{{ review.comment or 'No written comment.' }}</p></div>{% endfor %}{% else %}<p class="muted">No reviews yet. Reviews can be added after a completed booking.</p>{% endif %}
+    </div>
+  </article>
+  <aside class="booking-card"><span class="eyebrow">SERVICE DETAILS</span><div class="price-large">{% if worker.price %}₹{{ worker.price }}<small> starting price</small>{% else %}Price on request{% endif %}</div><div class="detail-line"><span>Service</span><strong>{{ worker.category }}</strong></div><div class="detail-line"><span>Area</span><strong>{{ worker.area }}</strong></div><div class="detail-line"><span>Phone</span><strong>{% if worker.phone %}Hidden until you coordinate{% else %}Not provided{% endif %}</strong></div>
+    {% if current_user.is_authenticated and current_user.role == 'customer' %}<a class="btn btn-primary full-width" href="{{ url_for('book_worker', worker_id=worker.id) }}">Request a booking <span>→</span></a>
+    {% elif not current_user.is_authenticated %}<a class="btn btn-primary full-width" href="{{ url_for('login') }}">Log in to book <span>→</span></a>
+    {% else %}<p class="muted small">Worker accounts cannot book their own services. Use a customer account to make a booking.</p>{% endif %}
+    <p class="safe-note">Booking requests are not confirmed until the worker accepts them.</p>
+  </aside>
+</section>
+{% endblock %}

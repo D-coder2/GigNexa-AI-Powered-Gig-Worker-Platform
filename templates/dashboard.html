@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — GigNexa{% endblock %}
+{% block content %}
+<section class="dashboard-heading"><div><span class="eyebrow">YOUR GIGNEXA SPACE</span><h1>Hello, {{ current_user.name.split(' ')[0] }}.</h1><p class="muted">{% if current_user.role == 'worker' %}Manage incoming booking requests and update service status.{% else %}Track your booking requests and review completed services.{% endif %}</p></div><span class="role-badge">{{ current_user.role|title }} account</span></section>
+{% if current_user.role == 'worker' %}
+<section class="dashboard-profile"><div class="avatar">{{ current_user.name[:1]|upper }}</div><div class="profile-summary"><strong>{{ current_user.category }}</strong><span>{{ current_user.area }} · {% if current_user.price %}Starting at ₹{{ current_user.price }}{% else %}Price on request{% endif %}</span></div><a class="btn btn-outline" href="{{ url_for('worker_detail', worker_id=current_user.id) }}">View public profile ↗</a></section>
+{% endif %}
+<section class="dashboard-section"><div class="section-heading"><div><span class="eyebrow">{% if current_user.role == 'worker' %}INCOMING REQUESTS{% else %}YOUR ACTIVITY{% endif %}</span><h2>{% if current_user.role == 'worker' %}Booking requests{% else %}Your bookings{% endif %}</h2></div><a class="text-link" href="{{ url_for('index') }}">Browse professionals →</a></div>
+{% if bookings %}
+<div class="booking-list">
+{% for booking in bookings %}
+<article class="booking-row">
+  <div class="booking-date"><span>{{ booking.service_date }}</span><strong>{{ booking.service_time }}</strong></div>
+  <div class="booking-description">
+    <h3>{% if current_user.role == 'worker' %}{{ booking.customer.name }}{% else %}{{ booking.worker.name }}{% endif %}</h3>
+    <p>{{ booking.description }}</p><small>⌖ {{ booking.address }}</small>
+    {% if current_user.role == 'worker' and booking.customer.phone %}<small>Customer phone: {{ booking.customer.phone }}</small>{% endif %}
+  </div>
+  <div class="booking-actions"><span class="status status-{{ booking.status }}">{{ booking.status|title }}</span>
+  {% if current_user.role == 'worker' %}
+    {% if booking.status == 'pending' %}
+      <form method="post" action="{{ url_for('update_booking_status', booking_id=booking.id) }}"><input type="hidden" name="status" value="accepted"><button class="btn btn-small btn-primary" type="submit">Accept</button></form>
+      <form method="post" action="{{ url_for('update_booking_status', booking_id=booking.id) }}"><input type="hidden" name="status" value="rejected"><button class="btn btn-small btn-danger" type="submit">Reject</button></form>
+    {% elif booking.status == 'accepted' %}
+      <form method="post" action="{{ url_for('update_booking_status', booking_id=booking.id) }}"><input type="hidden" name="status" value="completed"><button class="btn btn-small btn-primary" type="submit">Mark complete</button></form>
+    {% endif %}
+  {% elif booking.status == 'completed' and booking.id not in review_booking_ids %}
+    <form class="review-form" method="post" action="{{ url_for('review_booking', booking_id=booking.id) }}"><label>Rate <select name="rating" required><option value="">Stars</option>{% for n in range(5,0,-1) %}<option value="{{ n }}">{{ n }} / 5</option>{% endfor %}</select></label><input name="comment" maxlength="500" placeholder="Optional review"><button class="btn btn-small btn-primary" type="submit">Submit review</button></form>
+  {% elif booking.status == 'completed' %}<small class="muted">Review submitted</small>{% endif %}
+  </div>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-icon">▤</div><h3>No bookings yet</h3><p>{% if current_user.role == 'worker' %}Your booking requests will appear here when a customer contacts you through GigNexa.{% else %}Find a local professional and send your first booking request.{% endif %}</p><a class="btn btn-primary" href="{{ url_for('index') }}">Explore professionals</a></div>
+{% endif %}
+</section>
+{% endblock %}

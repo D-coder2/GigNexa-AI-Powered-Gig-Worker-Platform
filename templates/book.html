@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Request booking — GigNexa{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('worker_detail', worker_id=worker.id) }}">← Back to professional</a></div>
+<section class="booking-page">
+  <div class="booking-intro"><span class="eyebrow">BOOK A LOCAL PROFESSIONAL</span><h1>Request a service.</h1><p>Share a few details so {{ worker.name }} can decide whether to accept the request.</p><div class="mini-worker"><div class="avatar">{{ worker.name[:1]|upper }}</div><div><strong>{{ worker.name }}</strong><span>{{ worker.category }} · {{ worker.area }}</span></div></div></div>
+  <div class="form-card"><h2>Booking details</h2><form method="post" class="stack-form">
+    <label>Preferred date<input type="date" name="service_date" required min="{{ today }}"></label>
+    <label>Preferred time<select name="service_time" required><option value="">Choose a time</option><option>Morning (8 AM–12 PM)</option><option>Afternoon (12 PM–4 PM)</option><option>Evening (4 PM–8 PM)</option></select></label>
+    <label>Service address<input name="address" required maxlength="250" placeholder="House / flat, street, area"></label>
+    <label>Describe what you need<textarea name="description" required rows="4" maxlength="2000" placeholder="Explain the issue or service required"></textarea></label>
+    <button class="btn btn-primary full-width" type="submit">Send booking request <span>→</span></button>
+    <p class="safe-note">No payment is collected in this MVP. The request remains pending until the worker responds.</p>
+  </form></div>
+</section>
+{% endblock %}

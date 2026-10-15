@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in — GigNexa{% endblock %}
+{% block content %}
+<section class="login-wrap">
+  <div class="form-card login-card"><span class="eyebrow">WELCOME BACK</span><h1>Good to see you.</h1><p class="muted">Log in to manage your service requests and bookings.</p>
+    <form method="post" class="stack-form">
+      <label>Email address<input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <label>Password<input type="password" name="password" required autocomplete="current-password" placeholder="Your password"></label>
+      <button class="btn btn-primary full-width" type="submit">Log in <span>→</span></button>
+    </form>
+    <p class="form-switch">New to GigNexa? <a href="{{ url_for('register') }}">Create an account</a></p>
+  </div>
+</section>
+{% endblock %}

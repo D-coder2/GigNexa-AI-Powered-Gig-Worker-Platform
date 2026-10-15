@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}GigNexa — Find trusted local professionals{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="pulse"></span> LOCAL SERVICES, MADE SIMPLE</span>
+    <h1>Get the right help.<br><span>Right around you.</span></h1>
+    <p>Discover local professionals, request a booking, and manage the service from one simple place.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#professionals">Explore professionals <span>→</span></a>
+      <a class="btn btn-light" href="{{ url_for('register') }}">Offer your services</a>
+    </div>
+    <div class="trust-line"><span>✓</span> Clear profiles &nbsp; <span>✓</span> Booking requests &nbsp; <span>✓</span> Customer reviews</div>
+  </div>
+  <div class="hero-art">
+    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+    <div class="hero-symbol">G<span>✦</span></div>
+    <div class="floating-card card-top"><span class="float-icon blue">⌂</span><div><b>Local professionals</b><small>Services near your area</small></div></div>
+    <div class="floating-card card-bottom"><span class="float-icon green">✓</span><div><b>Booking made easy</b><small>Request · Accept · Complete</small></div></div>
+    <div class="spark spark-one">✦</div><div class="spark spark-two">✧</div>
+  </div>
+</section>
+
+<section class="search-panel">
+  <div class="search-heading"><div><span class="eyebrow">DISCOVER SERVICES</span><h2>What can we help you with?</h2></div><span class="result-count">{{ workers|length }} professional{{ '' if workers|length == 1 else 's' }}</span></div>
+  <form class="search-form" action="{{ url_for('index') }}" method="get">
+    <label><span>Service category</span>
+      <select name="category">
+        <option value="">All services</option>
+        {% for category in categories %}<option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>{% endfor %}
+      </select>
+    </label>
+    <label><span>Your area</span><input name="area" value="{{ selected_area }}" placeholder="e.g. Faridabad, Sector 15"></label>
+    <button class="btn btn-primary search-btn" type="submit">Search professionals <span>→</span></button>
+  </form>
+</section>
+
+<section class="services-strip">
+  {% for item in [('⚡','Electrician'),('🔧','Plumber'),('❄','AC Technician'),('🧹','Cleaner'),('🎨','Painter'),('🪚','Carpenter')] %}
+  <a class="service-chip" href="{{ url_for('index', category=item[1]) }}"><span>{{ item[0] }}</span>{{ item[1] }}</a>
+  {% endfor %}
+</section>
+
+<section id="professionals" class="professionals-section">
+  <div class="section-heading"><div><span class="eyebrow">MEET YOUR LOCAL EXPERTS</span><h2>Available professionals</h2><p>Choose a professional and send a booking request when you're ready.</p></div></div>
+  {% if workers %}
+  <div class="worker-grid">
+    {% for worker in workers %}
+    <article class="worker-card">
+      <div class="worker-card-top"><div class="avatar">{{ worker.name[:1]|upper }}</div><span class="available-pill"><span></span> Listed on GigNexa</span></div>
+      <div class="worker-info"><h3>{{ worker.name }}</h3><p class="worker-category">{{ worker.category or 'Local professional' }}</p><p class="worker-bio">{{ worker.bio or 'A local service professional ready to discuss your requirements.' }}</p></div>
+      <div class="worker-meta"><span>⌖ {{ worker.area }}</span><strong>{% if worker.price %}From ₹{{ worker.price }}{% else %}Price on request{% endif %}</strong></div>
+      <a class="btn btn-outline full-width" href="{{ url_for('worker_detail', worker_id=worker.id) }}">View profile <span>→</span></a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="empty-icon">⌕</div><h3>No professionals found yet</h3><p>Try another category or area, or register as a worker to create the first profile.</p><a class="btn btn-primary" href="{{ url_for('register') }}">Join as a worker</a></div>
+  {% endif %}
+</section>
+{% endblock %}

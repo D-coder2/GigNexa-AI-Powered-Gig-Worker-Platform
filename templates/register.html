@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Create account — GigNexa{% endblock %}
+{% block content %}
+<section class="form-page">
+  <div class="form-aside"><span class="eyebrow">WELCOME TO GIGNEXA</span><h1>Local connections.<br><span>Real services.</span></h1><p>Whether you need a helping hand or want to grow your local service business, there's a place for you here.</p><div class="aside-points"><p>✓ Simple booking requests</p><p>✓ Profiles built around trust</p><p>✓ One dashboard for your activity</p></div></div>
+  <div class="form-card"><div class="form-card-heading"><h2>Create your account</h2><p>Choose how you'll use GigNexa.</p></div>
+    <form method="post" class="stack-form">
+      <label>Full name<input name="name" required maxlength="100" placeholder="Your name"></label>
+      <label>Email address<input type="email" name="email" required placeholder="you@example.com"></label>
+      <label>Password<input type="password" name="password" required minlength="8" placeholder="At least 8 characters"></label>
+      <label>Account type<select name="role" id="role" required><option value="customer">I need a service (Customer)</option><option value="worker">I provide local services (Worker)</option></select></label>
+      <label>Phone number <span class="optional">(optional)</span><input name="phone" type="tel" maxlength="30" placeholder="Your contact number"></label>
+      <label>Area / city<input name="area" required maxlength="120" placeholder="e.g. Faridabad, Sector 15"></label>
+      <div id="worker-fields" class="worker-fields hidden">
+        <label>Service category<select name="category"><option value="">Choose a service</option>{% for category in categories %}<option value="{{ category }}">{{ category }}</option>{% endfor %}</select></label>
+        <label>Starting price in ₹ <span class="optional">(optional)</span><input type="number" min="0" name="price" placeholder="e.g. 299"></label>
+        <label>About your service <span class="optional">(optional)</span><textarea name="bio" rows="3" maxlength="1000" placeholder="Experience, services offered, tools, etc."></textarea></label>
+      </div>
+      <button class="btn btn-primary full-width" type="submit">Create account <span>→</span></button>
+    </form>
+    <p class="form-switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+</section>
+<script>
+const roleSelect = document.getElementById('role');
+const workerFields = document.getElementById('worker-fields');
+function updateWorkerFields() {
+  const isWorker = roleSelect.value === 'worker';
+  workerFields.classList.toggle('hidden', !isWorker);
+  workerFields.querySelectorAll('select, input, textarea').forEach(el => el.disabled = !isWorker);
+}
+roleSelect.addEventListener('change', updateWorkerFields);
+updateWorkerFields();
+</script>
+{% endblock %}
